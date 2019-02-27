@@ -42,7 +42,7 @@ export function isWNode<W extends WidgetBaseInterface = DefaultWidgetBaseInterfa
 /**
  * Helper function that returns true if the `DNode` is a `VNode` using the `type` property
  */
-export function isVNode(child: DNode): child is VNode {
+export function isVNode(child: DNode | any): child is VNode {
 	return Boolean(
 		child && child !== true && typeof child !== 'string' && (child.type === VNODE || child.type === DOMVNODE)
 	);
