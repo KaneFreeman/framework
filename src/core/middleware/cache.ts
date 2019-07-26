@@ -3,22 +3,25 @@ import Map from '../../shim/Map';
 
 const factory = create({ destroy });
 
-export const cache = factory(({ middleware: { destroy } }) => {
-	const cacheMap = new Map<string, any>();
-	destroy(() => {
-		cacheMap.clear();
-	});
-	return {
-		get<T = any>(key: any): T | undefined {
-			return cacheMap.get(key);
-		},
-		set<T = any>(key: any, value: T): void {
-			cacheMap.set(key, value);
-		},
-		clear(): void {
+export const createCacheMiddleware = <C extends {} = {}>(initialValue: C) => {
+	return factory(({ middleware: { destroy } }) => {
+		const values = Object.keys(initialValue).map((k) => [k, initialValue[k]]) as [keyof C, any][];
+		const cacheMap = new Map<keyof C, any>(values);
+		destroy(() => {
 			cacheMap.clear();
-		}
-	};
-});
+		});
+		return {
+			get<K extends keyof C>(key: K) {
+				return cacheMap.get(key) as Partial<C>[K];
+			},
+			set<K extends keyof C>(key: K, value: C[K]): void {
+				cacheMap.set(key, value);
+			},
+			clear(): void {
+				cacheMap.clear();
+			}
+		};
+	});
+};
 
-export default cache;
+export default createCacheMiddleware;

@@ -2,12 +2,12 @@ const { it, describe, afterEach } = intern.getInterface('bdd');
 const { assert } = intern.getPlugin('chai');
 import { sandbox } from 'sinon';
 
-import iCacheMiddleware from '../../../../src/core/middleware/icache';
-import cacheMiddleware from '../../../../src/core/middleware/cache';
+import createIcacheMiddleware from '../../../../src/core/middleware/icache';
+import createCacheMiddleware from '../../../../src/core/middleware/cache';
+import { string } from '../../../../src/shim/main';
 
 const sb = sandbox.create();
 const invalidatorStub = sb.stub();
-const { callback } = iCacheMiddleware();
 
 describe('icache middleware', () => {
 	afterEach(() => {
@@ -15,13 +15,15 @@ describe('icache middleware', () => {
 	});
 
 	it('should invalidate when value is set to the cache', () => {
+		const cacheMiddleware = createCacheMiddleware({});
+		const icacheMiddleware = createIcacheMiddleware<{ test?: string; 'test-two'?: string }>({});
 		const cache = cacheMiddleware().callback({
 			id: 'cache-test',
 			middleware: { destroy: sb.stub() },
 			properties: () => ({}),
 			children: () => []
 		});
-		const icache = callback({
+		const icache = icacheMiddleware().callback({
 			id: 'test',
 			middleware: {
 				cache,
@@ -38,13 +40,15 @@ describe('icache middleware', () => {
 	});
 
 	it('should invalidate when cache value is resolved and set resolved value as result', () => {
+		const cacheMiddleware = createCacheMiddleware({});
+		const icacheMiddleware = createIcacheMiddleware<{ test?: string }>({});
 		const cache = cacheMiddleware().callback({
 			id: 'cache-test',
 			middleware: { destroy: sb.stub() },
 			properties: () => ({}),
 			children: () => []
 		});
-		const icache = callback({
+		const icache = icacheMiddleware().callback({
 			id: 'test',
 			middleware: {
 				cache,
@@ -75,13 +79,15 @@ describe('icache middleware', () => {
 	});
 
 	it('should invalidate allow cache value to replaced when calling set directly', () => {
+		const cacheMiddleware = createCacheMiddleware({});
+		const icacheMiddleware = createIcacheMiddleware<{ test?: string }>({});
 		const cache = cacheMiddleware().callback({
 			id: 'cache-test',
 			middleware: { destroy: sb.stub() },
 			properties: () => ({}),
 			children: () => []
 		});
-		const icache = callback({
+		const icache = icacheMiddleware().callback({
 			id: 'test',
 			middleware: {
 				cache,
@@ -114,13 +120,15 @@ describe('icache middleware', () => {
 	});
 
 	it('should be able to clear the cache', () => {
+		const cacheMiddleware = createCacheMiddleware({});
+		const icacheMiddleware = createIcacheMiddleware<{ test?: string }>({});
 		const cache = cacheMiddleware().callback({
 			id: 'cache-test',
 			middleware: { destroy: sb.stub() },
 			properties: () => ({}),
 			children: () => []
 		});
-		const icache = callback({
+		const icache = icacheMiddleware().callback({
 			id: 'test',
 			middleware: {
 				cache,

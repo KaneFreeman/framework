@@ -7,7 +7,7 @@ import { v, w, isVNode, tsx, create, diffProperty, invalidator } from '../../../
 import Set from '../../../src/shim/Set';
 import Map from '../../../src/shim/Map';
 import { VNode, WNode, WidgetProperties } from '../../../src/core/interfaces';
-import icache from '../../../src/core/middleware/icache';
+import createIcacheMiddleware from '../../../src/core/middleware/icache';
 
 const noop: any = () => {};
 
@@ -575,16 +575,17 @@ describe('harness', () => {
 
 	describe('functional widgets', () => {
 		it('should inject invalidator mock', () => {
+			const icache = createIcacheMiddleware<{ counter: number }>({ counter: 0 });
 			const factory = create({ icache });
 
 			const App = factory(({ middleware: { icache } }) => {
-				const counter = icache.get<number>('counter') || 0;
+				const counter = icache.get('counter');
 				return (
 					<div>
 						<button
 							key="click-me"
 							onclick={() => {
-								const counter = icache.get<number>('counter') || 0;
+								const counter = icache.get('counter');
 								icache.set('counter', counter + 1);
 							}}
 						>{`Click Me ${counter}`}</button>

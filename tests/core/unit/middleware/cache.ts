@@ -2,7 +2,7 @@ const { it, describe, afterEach } = intern.getInterface('bdd');
 const { assert } = intern.getPlugin('chai');
 import { stub } from 'sinon';
 
-import cacheMiddleware from '../../../../src/core/middleware/cache';
+import createCacheMiddleware from '../../../../src/core/middleware/cache';
 
 const destroyStub = stub();
 
@@ -12,6 +12,7 @@ describe('cache middleware', () => {
 	});
 
 	it('should be able to store and retrieve values from the cache', () => {
+		const cacheMiddleware = createCacheMiddleware<{ test?: string }>({});
 		const { callback } = cacheMiddleware();
 		const cache = callback({
 			id: 'test',
@@ -27,6 +28,7 @@ describe('cache middleware', () => {
 	});
 
 	it('should register destroy to clear the map', () => {
+		const cacheMiddleware = createCacheMiddleware<{ test: string }>({ test: 'value' });
 		const { callback } = cacheMiddleware();
 		const cache = callback({
 			id: 'test',
@@ -43,6 +45,7 @@ describe('cache middleware', () => {
 	});
 
 	it('should be able to clear the cache', () => {
+		const cacheMiddleware = createCacheMiddleware<{ test?: string }>({});
 		const { callback } = cacheMiddleware();
 		const cache = callback({
 			id: 'test',
