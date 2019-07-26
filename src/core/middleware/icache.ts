@@ -8,10 +8,10 @@ interface CacheWrapper<T = any> {
 	value: T;
 }
 
-type NotFunction<T> = T extends Function ? never : T;
 interface GetOrSet {
-	<T = any>(key: any, value: NotFunction<T>): NotFunction<T>;
-	<T = any>(key: any, value: () => T | Promise<T>): T | undefined;
+	<T>(key: any, value: () => Promise<T>): T | undefined;
+	<T>(key: any, value: () => T): T;
+	<T>(key: any, value: T): T;
 }
 
 interface IcacheResult {
@@ -24,7 +24,7 @@ interface IcacheResult {
 export const icache = factory(
 	({ middleware: { invalidator, cache } }): IcacheResult => {
 		return {
-			getOrSet<T = any>(key: any, value: T | (() => T | Promise<T>)): T | undefined {
+			getOrSet<T>(key: any, value: (() => Promise<T>) | (() => T) | T): T | undefined {
 				let cachedValue = cache.get<CacheWrapper<T>>(key);
 				if (!cachedValue) {
 					this.set(key, value);
