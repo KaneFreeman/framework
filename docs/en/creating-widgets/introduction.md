@@ -31,6 +31,16 @@ export default factory(function MyWidget() {
 });
 ```
 
+```ts
+import { create, tsx, w } from '@dojo/framework/core/vdom';
+
+const factory = create();
+
+export default factory(function MyWidget() {
+	return w('div', ['Hello from a Dojo widget!']);
+});
+```
+
 ## Specifying widget properties
 
 -   Making widgets more reusable by abstracting out [state](/learn/creating-widgets/managing-state), configuration and [event handling](/learn/creating-widgets/enabling-interactivity) via a [typed properties interface](/learn/creating-widgets/managing-state#intermediate-passing-widget-properties)
